@@ -106,7 +106,7 @@ const NavBar = () => {
             <div className="relative">
               {/* Profile Icon for Mobile */}
               <button
-                className="flex items-center px-4 py-2 text-gray-500 text-[35px] font-semibold rounded-lg sm:hidden"
+                className="flex items-center px-4 py-2 text-gray-500 text-[35px] font-semibold rounded-lg sm:flex md:hidden"
                 onClick={toggleDropdown}
               >
                 <CgProfile />
@@ -114,7 +114,7 @@ const NavBar = () => {
 
               {/* Profile Button for Desktop */}
               <button
-                className="flex items-center px-4 py-2 bg-[#3431BB] text-white text-sm font-semibold rounded-lg shadow-md hover:bg-blue-700 md:flex hidden"
+                className="flex items-center px-4 py-2 bg-[#3431BB] text-white text-sm font-semibold rounded-lg shadow-md hover:bg-blue-700 hidden md:flex"
                 onClick={toggleDropdown}
               >
                 Profile <IoIosArrowDown className="ml-2" />
