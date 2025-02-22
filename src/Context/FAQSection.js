@@ -1,7 +1,7 @@
 import { useState ,useEffect } from "react";
 import { Accordion, AccordionTab } from "primereact/accordion";
 import { FaPlus, FaMinus } from "react-icons/fa";
-import { useRouter } from "next/router";
+import { useRouter } from "next/router"; 
 
 const FAQSection = () => {
   const [activeIndex, setActiveIndex] = useState(null);

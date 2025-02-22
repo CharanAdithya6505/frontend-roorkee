@@ -46,7 +46,8 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
-    "@types/node": "20.14.2"
+    "@types/node": "20.14.2",
+    "cypress": "^14.0.3"
   },
   "description": "This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).",
   "main": "postcss.config.js",
