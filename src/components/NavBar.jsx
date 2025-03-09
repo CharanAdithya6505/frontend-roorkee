@@ -39,7 +39,7 @@ const NavBar = () => {
       router.push("/login");
     }
     toggleDropdown();
-  };
+  };  
 
   const closeProfileModal = () => {
     setIsProfileModalOpen(false);

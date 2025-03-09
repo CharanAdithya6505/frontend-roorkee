@@ -35,3 +35,28 @@
 //     }
 //   }
 // }
+Cypress.Commands.add('login', () => {
+    cy.visit('/login', { timeout: 20000 });
+  
+    // Intercept any POST request that contains 'login' in the URL
+    cy.intercept('POST', '**/login**').as('loginRequest');
+  
+    cy.get('#email', { timeout: 10000 }).should('be.visible').type('test@example.com');
+    cy.get('#password', { timeout: 10000 }).should('be.visible').type('password123');
+  
+    cy.get('button[type="submit"]').should('be.visible').click();
+  
+    // Wait for the API request and check the response
+    cy.wait('@loginRequest', { timeout: 15000 }).then((interception) => {
+      if (!interception.response) {
+        throw new Error('Login request was never sent or intercepted.');
+      }
+      cy.log(`Login API responded with status: ${interception.response.statusCode}`);
+      expect(interception.response.statusCode).to.eq(200);
+    });
+  
+    // Ensure successful login by checking if redirected
+    cy.url().should('not.include', '/login', { timeout: 15000 });
+  });
+  
+  
