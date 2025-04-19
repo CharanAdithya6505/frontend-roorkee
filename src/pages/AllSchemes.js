@@ -105,21 +105,21 @@ const SchemesAll = () => {
 
       {/* Banner Image */}
       <div className="relative max-w-[90%] mx-auto mb-[16px] sm:mb-8 mt-[2rem] sm:block hidden">
-        <div className="relative w-full">
+        <div className="relative w-full ">
           <Image
             src={img || bannerImage || backUpBannerImage}
             alt="Loading Image..."
             layout="responsive"
             width={100}
             height={50}
-            className="rounded-[15px] object-contain"
+            className="rounded-[15px] object-contain "
           />
         </div>
       </div>
 
       <div className="max-w-[90%] mx-auto flex flex-col md:flex-row ">
         <div className="flex-1 md:max-w-[25%] p-4 md:mr-2 order-2 md:order-1 hidden md:block py-[1rem]">
-          <div className="sticky bg-white z-10 top-0">
+          <div className="sticky bg-white z-0 top-0">
             <div className="flex justify-between items-center">
               <h1 className="m-0 font-semibold ml-2">Filters</h1>
               <button
@@ -136,6 +136,7 @@ const SchemesAll = () => {
           <div className="flex space-between ml-1 hidden md:block max-h-[70vh] overflow-y-auto scrollbar-none">
             {/* Sponsored By Dropdown */}
             <div
+              data-testid="sponsored-button"
               className="flex justify-between items-center hover:bg-[#EEEEFF] hover:rounded-md hover:text-onclick-btnblue p-[4px] pb-2 pr-2"
               onClick={() => toggleDropdown("sponsoredOpen")}
             >
@@ -153,6 +154,7 @@ const SchemesAll = () => {
             {/* Department Dropdown */}
             {isDepartmentVisible && (
               <div
+                data-testid="department-button"
                 className="flex justify-between items-center hover:bg-[#EEEEFF] hover:rounded-md hover:text-onclick-btnblue p-[4px] pr-2 pb-2"
                 onClick={() => toggleDropdown("departmentOpen")}
               >
@@ -165,12 +167,13 @@ const SchemesAll = () => {
               </div>
             )}
             {isDepartmentVisible && dropDownStates.departmentOpen && (
-              <DepartmentDropdownMenu />
+              <DepartmentDropdownMenu/>
             )}
 
             {/* Beneficiaries Dropdown */}
             {isBeneficiaryVisible && (
               <div
+                data-testid="beneficiaries-button"
                 className="flex justify-between items-center hover:bg-[#EEEEFF] hover:rounded-md hover:text-onclick-btnblue p-[4px] pr-2 pb-2"
                 onClick={() => toggleDropdown("beneficiaryOpen")}
               >

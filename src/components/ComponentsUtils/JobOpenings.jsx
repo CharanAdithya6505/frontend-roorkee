@@ -7,7 +7,7 @@ import JobCount from "./JobCount";
 
 export default function JobOpenings() {
   const { searchQuery } = useTabContext();
-  const { states, departments, beneficiaries, sponsoredBy } =
+  const { states, departments, beneficiaries, sponsoredBy, profileFieldData } =
     useContext(FilterContext);
   const { currentPage } = useContext(PageContext);
   const [dataOfApi, setDataOfApi] = useState({});
@@ -39,6 +39,7 @@ export default function JobOpenings() {
           beneficiary_keywords: beneficiaries,
           search_query: searchQuery,
           tag: "job",
+          user_profile: profileFieldData
           // ordering: "-title",
         });
 

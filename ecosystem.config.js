@@ -7,7 +7,7 @@ module.exports = {
       interpreter: 'none',
       env: {
         NODE_ENV: 'production',
-        PORT: 8000, // Change this to your actual port if different
+        PORT: 80, // Change this to your actual port if different
       },
 }]
 }

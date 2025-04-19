@@ -1,0 +1,45 @@
+name: Cypress Tests
+
+on:
+  pull_request:
+    branches:
+      - main  # Runs when a PR is opened to main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18  # Use the Node.js version your project needs
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Create .env file
+        run: |
+          echo "NEXT_PUBLIC_API_BASE_URL=http://43.204.236.103:8000" > .env
+
+      - name: Build the Project (for Next.js or React apps)
+        run: npm run build  # Required for Next.js, ignore for pure React
+
+      - name: Start the Server
+        run: npm start &  # Start server in the background
+        env:
+          PORT: 3000
+          NEXT_PUBLIC_API_BASE_URL: http://43.204.236.103:8000
+
+      - name: Wait for Server to Start
+        run: sleep 10  # Wait 10 seconds for server to boot
+
+      # - name: Run Cypress Tests (Only login & signup)
+      #   run: |
+      #     npx cypress run --browser chrome --spec "cypress/e2e/login.cy.js,cypress/e2e/signup.cy.js"  
+
+        env:
+          NEXT_PUBLIC_API_BASE_URL: http://43.204.236.103:8000

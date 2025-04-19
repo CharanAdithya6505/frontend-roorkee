@@ -16,7 +16,9 @@ const DropdownMenu = () => {
     }
   };
   return (
-    <div className="text-[#616161] bg-[rgb(255,255,255)] w-[200] max-w-[600px] flex flex-col whitespace-wrap z-50 text-[14px] mt-0 ">
+    <div 
+    data-testid="beneficiaries-dropdown"
+    className="text-[#616161] bg-[rgb(255,255,255)] w-[200] max-w-[600px] flex flex-col whitespace-wrap z-50 text-[14px] mt-0 ">
       <ul className="flex flex-col font-sans list-none p-0 m-0 gap-0 pb-[18px]">
         {uniqueCategories.map((item, index) => (
           <li

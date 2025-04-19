@@ -7,8 +7,8 @@ import { useTabContext } from "@/Context/TabContext";
 // import Scholarships from "./Scholarships";
 
 export default function Scholarships() {
-  const { searchQuery } = useTabContext();
-  const { states, departments, beneficiaries, sponsoredBy } =
+  const { query } = useTabContext();
+  const { states, departments, beneficiaries, sponsoredBy, profileFieldData } =
     useContext(FilterContext);
   const { currentPage } = useContext(PageContext);
   const [dataOfApi, setDataOfApi] = useState({});
@@ -20,12 +20,6 @@ export default function Scholarships() {
       try {
         setDataOfApi({});
         let url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/schemes/multi-state-departments/?limit=10&page=${currentPage}`;
-        console.log("scholarhsip", url);
-        // const cachedData = localStorage.getItem(url);
-
-        // if (cachedData) {
-        //   setDataOfApi(JSON.parse(cachedData));
-        // } else {
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 
@@ -39,9 +33,10 @@ export default function Scholarships() {
               ? sponsoredBy[0]
               : [],
           beneficiary_keywords: beneficiaries,
-          search_query: searchQuery,
+          search_query: query,
           tag: "scholarship",
           is_active: true,
+          user_profile: profileFieldData,
         });
 
         const requestOptions = {
@@ -66,14 +61,7 @@ export default function Scholarships() {
     };
 
     fetchState();
-  }, [
-    searchQuery,
-    currentPage,
-    sponsoredBy,
-    states,
-    departments,
-    beneficiaries,
-  ]);
+  }, [query, currentPage, sponsoredBy, states, departments, beneficiaries]);
 
   if (
     dataOfApi.count === 0 &&

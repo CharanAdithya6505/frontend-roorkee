@@ -1,10 +1,10 @@
 import { useAuth } from "@/Context/AuthContext";
-import SavedModal from "@/pages/Modals/savedModal";
+import SavedModal from "@/components/Modals/savedModal.js";
 import { useEffect, useState } from "react";
-import { CiBookmark } from "react-icons/ci";
+import { CiBookmark, CiShare2 } from "react-icons/ci";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { GoBookmarkFill } from "react-icons/go";
-import ApplyModal from "@/pages/Modals/ApplySchemesModal";
+import ApplyModal from "@/components/Modals/ApplySchemesModal.js";
 import Toast from "./ComponentsUtils/SavedToast.jsx";
 import UnSaveToast from "./ComponentsUtils/UnsaveToast";
 import PageContext from "@/Context/PageContext";
@@ -17,12 +17,20 @@ import Footer from "./Footer.jsx";
 import { useBookmarkContext } from "@/Context/BookmarkContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
+import { useRouter } from "next/router.js";
+import { FaShareAlt } from "react-icons/fa";
+import { data } from "autoprefixer";
+import HowToApply from "./Modals/HowToApply.js";
+import { toast } from "react-toastify";
+import ShareModal from "./ShareModal.jsx";
 
 export default function Categories({ ffff, dataFromApi, totalPages }) {
+  const router = useRouter();
   const { activeTab, setActiveTab } = useTabContext(); // Accessing context
   const { isBookmarked, toggleBookmark, setIsBookmarked } =
     useBookmarkContext();
   const [selectedScheme, setSelectedScheme] = useState(null);
+  const { scheme_id, tab } = router.query;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSavedModalOpen, setIsSavedModalOpen] = useState(false);
   const { authState } = useAuth();
@@ -33,6 +41,9 @@ export default function Categories({ ffff, dataFromApi, totalPages }) {
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
   const [sidePannelSelected, setSidePannelSelected] = useState(null);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [schemeUrl, setSchemeUrl] = useState("");
+
   const {
     states,
     setStates,
@@ -41,7 +52,7 @@ export default function Categories({ ffff, dataFromApi, totalPages }) {
     statesFromApi,
     setStatesFromApi,
   } = useContext(FilterContext);
-  // Close the toast after a certain time
+
   useEffect(() => {
     if (isToastVisible) {
       const timer = setTimeout(() => {
@@ -59,14 +70,12 @@ export default function Categories({ ffff, dataFromApi, totalPages }) {
       }, 3000);
       return () => clearTimeout(timer);
     }
-  }),
-    [isUnSaveToastVisible];
+  }, [isUnSaveToastVisible]);
 
   // Fetch saved schemes so that we can mark saved schemes as bookmarked
   useEffect(() => {
     const fetchSavedSchemes = async () => {
       if (authState.token) {
-        // console.log("Auth token for catagory:", authState.token);
         try {
           const myHeaders = new Headers();
           myHeaders.append("Authorization", `Bearer ${authState.token}`);
@@ -96,17 +105,53 @@ export default function Categories({ ffff, dataFromApi, totalPages }) {
     };
     fetchSavedSchemes();
   }, [authState.token]);
+  useEffect(() => {
+    if (!router.isReady) return;
+  
+    const schemeId = parseInt(router.query.scheme_id);
+    const modalOpen = router.query.modal_open === "true";
+  
+    if (modalOpen && schemeId) {
+      const existingScheme = dataFromApi?.results?.find(
+        (scheme) => scheme.id === schemeId
+      );
+  
+      if (existingScheme) {
+        setSelectedScheme(existingScheme);
+        setIsModalOpen(true);
+      } else {
+        fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/schemes/${schemeId}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (data?.id) {
+              setSelectedScheme(data);
+              setIsModalOpen(true);
+            } else {
+              console.warn("❌ Scheme not found via ID fetch");
+            }
+          })
+          .catch((err) => console.error("Error fetching scheme:", err));
+      }
+    }
+  }, [
+    router.isReady,
+    router.query.scheme_id,
+    router.query.modal_open,
+    dataFromApi?.results,
+  ]);
+  
+  
 
   const logUserEvent = async (eventType, schemeId = null, details = {}) => {
     const eventBody = {
       event_type: eventType,
-      ...(schemeId && { scheme_id: schemeId }),
+      ...(schemeId && { scheme: schemeId }),
       details: details,
     };
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/events/log_event/`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/events/log/`,
         {
           method: "POST",
           headers: {
@@ -122,16 +167,22 @@ export default function Categories({ ffff, dataFromApi, totalPages }) {
       }
 
       const data = await response.json();
-      console.log("Event logged successfully:", data);
     } catch (error) {
       console.error("Error logging event:", error);
     }
   };
-
   const handleClick = (scheme_id) => {
-    const scheme = dataFromApi.results.find((item) => item.id === scheme_id);
+    const scheme = dataFromApi?.results?.find((item) => item.id === scheme_id);
     if (scheme) {
       const startTime = Date.now();
+
+      router.push(
+        `/AllSchemes?tab=${activeTab}&scheme_id=${scheme_id}`,
+        undefined,
+        {
+          shallow: true,
+        }
+      );
 
       viewscheme(scheme_id);
       setSelectedScheme(scheme);
@@ -139,30 +190,22 @@ export default function Categories({ ffff, dataFromApi, totalPages }) {
       setSidePannelSelected(scheme_id);
 
       // Track time when modal closes
-      const interval = setInterval(() => {
-        const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
-
-        // Log the event every 5 seconds
-        if (elapsedTime % 5 === 0) {
-          logUserEvent("view", scheme_id, {
-            watch_time: elapsedTime + " seconds",
-          });
-        }
-      }, 5000);
-
-      // Stop tracking when modal closes
       const stopTracking = () => {
-        clearInterval(interval);
-        const totalTime = Math.floor((Date.now() - startTime) / 1000);
-        logUserEvent("view", scheme_id, { watch_time: totalTime + " seconds" });
+        const totalTime = Math.floor(Date.now() - startTime);
+        logUserEvent("view", scheme_id, {
+          watch_time: totalTime / 1000 + " seconds",
+        });
       };
 
       // Listen for modal close event
-      document.addEventListener("click", (event) => {
-        if (event.target.classList.contains("modal-close")) {
+      const observer = new MutationObserver(() => {
+        if (!isModalOpen) {
           stopTracking();
+          observer.disconnect();
         }
       });
+
+      observer.observe(document.body, { childList: true, subtree: true });
     }
   };
 
@@ -190,6 +233,7 @@ export default function Categories({ ffff, dataFromApi, totalPages }) {
       );
       if (response.ok) {
         const result = await response.json();
+        logUserEvent("save", scheme_id);
 
         return true;
       } else {
@@ -220,8 +264,6 @@ export default function Categories({ ffff, dataFromApi, totalPages }) {
     };
 
     try {
-      console.log("Sending unsave request for scheme_id:", scheme_id);
-      console.log("Request payload:", raw);
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/unsave_scheme/`,
         requestOptions
@@ -229,7 +271,6 @@ export default function Categories({ ffff, dataFromApi, totalPages }) {
       const result = await response.json();
       // console.log("Unsave response:", result); // Log the response
       if (response.ok) {
-        // console.log(result);
         setIsUnSaveToastVisible(true); // Show the toast
         return true;
       } else {
@@ -264,9 +305,7 @@ export default function Categories({ ffff, dataFromApi, totalPages }) {
         requestOptions
       );
       const result = await response.json();
-      // console.log("Unsave response:", result); // Log the response
       if (response.ok) {
-        console.log("Scheme saved successfully!");
       } else {
         console.error("Failed to save scheme");
         return false;
@@ -297,21 +336,46 @@ export default function Categories({ ffff, dataFromApi, totalPages }) {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/schemes/{scheme_id}/view/`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/schemes/${scheme_id}/view/`,
         requestOptions
       );
       const result = await response.json();
-      // console.log("Unsave response:", result); // Log the response
       if (response.ok) {
-        console.log("Scheme viewed successfully!");
       } else {
-        console.error("Failed to view scheme");
         return false;
       }
     } catch (error) {
       console.error(error);
       return false;
     }
+  };
+
+  const handleShare = async (schemeId) => {
+    setIsShareModalOpen(true)
+    const baseUrl = window.location.origin + window.location.pathname;
+    const shareUrl = `${baseUrl}?tab=${activeTab}&scheme_id=${schemeId}&modal_open=true`;
+    setSchemeUrl(shareUrl)
+
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await NavigationHistoryEntry.clipboard.writeText(shareUrl);
+        toast.success("Link copied to clipboard!");
+      } catch (err) {
+        fallbackCopy(shareUrl);
+      }
+    } else {
+      fallbackCopy(shareUrl);
+    }
+  };
+
+  const fallbackCopy = (text) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textArea);
+    toast.success("Link copied to clipboard!");
   };
 
   const handleBookmarkToggle = async (e, itemId) => {
@@ -400,7 +464,7 @@ export default function Categories({ ffff, dataFromApi, totalPages }) {
           (item) =>
             item.title && (
               <div
-                className="flex items-start justify-between self-stretch relative border-[1px] border-gray-300 rounded-[12px] mb-2 py-[16px] px-[16px] my-6 hover:bg-violet-100 gap-[20px]"
+                className="flex items-start justify-between self-stretch relative border-[1px] border-gray-300 rounded-[12px] mb-2 py-[16px] px-[16px] my-6 hover:bg-violet-100 gap-[20px] pr-8"
                 key={item.id}
                 style={{
                   backgroundColor:
@@ -408,7 +472,7 @@ export default function Categories({ ffff, dataFromApi, totalPages }) {
                 }}
               >
                 <div onClick={() => handleClick(item.id)}>
-                  <div className="gap-[12px] pt-[16px] pd-[16px] w-[200px] md:w-full">
+                  <div className="gap-[12px] pt-[16px] pd-[16px] w-[140px] md:w-full">
                     <p
                       className="font-inter text-[16px] sm:text-[18px] leading-[21.6px] cursor-pointer font-semibold mb-[10px] line-clamp-2 text-gray-700"
                       role="button"
@@ -474,18 +538,35 @@ export default function Categories({ ffff, dataFromApi, totalPages }) {
                     </div>
                   </div>
                 </div>
-                <ToolTips tooltip="Save scheme">
-                  <div
-                    className="cursor-pointer px-2 py-2 right-[8.25px]"
-                    onClick={(e) => handleBookmarkToggle(e, item.id)}
-                  >
-                    {isBookmarked[item.id] ? (
-                      <GoBookmarkFill className="sm:w-[27.5px] sm:h-[27.5px] h-[20px] w-[20px] text-[#3431BB]" />
-                    ) : (
-                      <CiBookmark className="sm:w-[27.5px] sm:h-[27.5px] h-[20px] w-[20px] " />
-                    )}
-                  </div>
-                </ToolTips>
+                <div className="flex items-center gap-4">
+                  <ToolTips tooltip="Save scheme">
+                    <div
+                      className="cursor-pointer px-2 py-2 right-[8.25px]"
+                      onClick={(e) => handleBookmarkToggle(e, item.id)}
+                    >
+                      {isBookmarked[item.id] ? (
+                        <GoBookmarkFill className="sm:w-[27.5px] sm:h-[27.5px] h-[20px] w-[20px] text-[#3431BB]" />
+                      ) : (
+                        <CiBookmark className="sm:w-[27.5px] sm:h-[27.5px] h-[20px] w-[20px] " />
+                      )}
+                    </div>
+                  </ToolTips>
+
+                  <ToolTips tooltip="Share scheme">
+                    <div
+                      className="cursor-pointer px-2 py-2 right-[8.25px]"
+                      onClick={() => handleShare(item.id)}
+                    >
+                      <CiShare2 className="sm:w-[27.5px] sm:h-[27.5px] h-[20px] w-[22px] text-gray-600 hover:text-[#3431BB]" />
+                    </div>
+                  </ToolTips>
+                  <ShareModal 
+                    url={schemeUrl} 
+                    title="" 
+                    isOpen={isShareModalOpen} 
+                    onClose={() => setIsShareModalOpen(false)} 
+                  />
+                </div>
               </div>
             )
         )}
@@ -505,15 +586,24 @@ export default function Categories({ ffff, dataFromApi, totalPages }) {
             onClose={() => setIsUnSaveToastVisible(false)}
           />
         )}
-
         {isModalOpen && selectedScheme && (
           <ApplyModal
             isOpen={isModalOpen}
             onRequestClose={() => {
               setIsModalOpen(false);
-              setSidePannelSelected(null);
+              setSelectedScheme(null);
+
+              router.push(
+                {
+                  pathname: router.pathname,
+                  query: { tab: router.query.tab },
+                },
+                undefined,
+                { shallow: true }
+              );
             }}
             scheme={selectedScheme}
+            activeTab={activeTab}
           />
         )}
         {isSavedModalOpen && (

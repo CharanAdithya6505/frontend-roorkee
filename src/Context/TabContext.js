@@ -6,7 +6,7 @@ const TabContext = createContext();
 
 export const TabProvider = ({ children }) => {
   const [activeTab, setActiveTab] = useState('Schemes'); // Default active tab
-  const [searchQuery, setSearchQuery] = useState('');
+  const [query, setquery] = useState('');
   
   useEffect(()=>{
     const currentURL = new URLSearchParams(window.location.search);
@@ -14,13 +14,13 @@ export const TabProvider = ({ children }) => {
     if(tab){
       setActiveTab(tab);
     }
-  },[activeTab])
+  },[])
   // const setTab = (tab) => {
   //   setActiveTab(tab);
   // };
 
   return (
-    <TabContext.Provider value={{ activeTab, setActiveTab, searchQuery, setSearchQuery }}>
+    <TabContext.Provider value={{ activeTab, setActiveTab, query, setquery }}>
       {children}
     </TabContext.Provider>
   );

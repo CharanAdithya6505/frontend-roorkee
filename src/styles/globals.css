@@ -50,6 +50,3 @@
 .custom-slide::-moz-range-thumb {
   @apply appearance-none w-4 h-4 bg-[#3431BB] rounded-full cursor-pointer;
 }
-
-
-

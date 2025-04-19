@@ -1,99 +1,88 @@
-<!-- This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://54.79.141.24:8000](http://54.79.141.24:8000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/ShareModal.js`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://54.79.141.24:8000/api/hello](http://54.79.141.24:8000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details. -->
-
 # frontendRoorkee
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Description
 
-This frontend application serves as the user interface for the backend platform that consolidates government schemes, scholarships, job opportunities, and other beneficial programs for minority communities and SC/ST communities. It provides an intuitive and responsive interface for users to interact with the data provided by the backend.
+Launchpad is a user-friendly web application designed to provide an intuitive interface for accessing government schemes, scholarships, job opportunities, and other beneficial programs targeted at minority and SC/ST communities. This frontend interacts with a backend platform to consolidate and display relevant data in an accessible format.
 
 ## Getting Started
 
 ### Prerequisites
 
-- **Node.js:** Ensure Node.js is installed on your system. You can download and install it from the [official Node.js website](https://nodejs.org/).
-- **npm (Node Package Manager):** Comes with Node.js and is used for managing dependencies.
+Before running this project, ensure you have the following installed:
+
+- **[Node.js](https://nodejs.org/):** Required for running the development server and managing dependencies.
+- **npm, Yarn, pnpm, or Bun:** Package managers for handling dependencies (npm comes bundled with Node.js).
 
 ### Installation
 
-1. Clone the Repository
+Follow these steps to set up the project on your local machine:
+
+1. **Clone the Repository**
 
    ```bash
    git clone https://github.com/yourusername/your-frontend-repo-name.git
    cd your-frontend-repo-name
    ```
 
-2. Install Dependencies
+2. **Install Dependencies**
 
-   Install the necessary dependencies using npm, Yarn, pnpm, or bun:
+   Use one of the following commands to install project dependencies:
 
    ```bash
-   npm install
-   # or
-   yarn install
-   # or
-   pnpm install
-   # or
-   bun install
+   npm install  # Using npm
+   yarn install  # Using Yarn
+   pnpm install  # Using pnpm
+   bun install  # Using Bun
    ```
+
+3. **Set Up Environment Variables**
+
+   Create a `.env` file in the root directory and add the following:
+
+   ```env
+   NEXT_PUBLIC_API_BASE_URL=<YOUR_BACKEND_API_URL>
+   ```
+
+   Replace `<YOUR_BACKEND_API_URL>` with the actual API base URL of your backend server.
+
+## API Setup
+
+The frontend interacts with the backend API, which can be set up using the following repository:
+
+- **Backend Repository:** [Community Empowerment Portal Backend](https://github.com/Community-Empowerment-Portal/backend-roorkee)
 
 ### Running the Development Server
 
-Start the development server:
+Start the local development server with:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev  # Using npm
+yarn dev  # Using Yarn
+pnpm dev  # Using pnpm
+bun dev  # Using Bun
 ```
+
+Then, open [http://localhost:3000](http://localhost:3000) in your browser to see the application in action.
 
 ## Features
 
-- **Responsive Design:** Provides a user-friendly interface that works across various devices and screen sizes.
-- **Data Integration:** Connects to the backend API to fetch and display government schemes, scholarships, and job opportunities.
-- **Search and Filter:** Allows users to search and filter data based on various criteria.
-- **User Authentication:** Includes user authentication and session management (if applicable).
+- **Responsive Design:** Ensures a seamless experience across different devices and screen sizes.
+- **Data Integration:** Fetches and displays government schemes, scholarships, and job opportunities from the backend API.
+- **Search & Filter:** Allows users to search and filter programs based on various criteria.
+- **User Authentication:** Supports login and session management (if implemented).
+- **Interactive UI:** Provides an intuitive and modern user experience.
+
+
+## Learn More
+
+For more information on Next.js, check out:
+
+- [Next.js Documentation](https://nextjs.org/docs) - Official Next.js documentation.
+- [Learn Next.js](https://nextjs.org/learn) - Interactive Next.js tutorial.
+
+---
+
+Contributions and feedback are welcome! If you encounter any issues or have suggestions, feel free to open an issue or submit a pull request. 
+

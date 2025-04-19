@@ -7,7 +7,7 @@ import { useContext, useEffect, useState } from "react";
 import Categories from "../components/Categories";
 
 export default function Saved() {
-  const { searchQuery } = useTabContext();
+  const { query } = useTabContext();
   const { states, departments, beneficiaries, sponsoredBy } =
     useContext(FilterContext);
   const { currentPage, removeSaved } = useContext(PageContext);
@@ -48,7 +48,7 @@ export default function Saved() {
               ? sponsoredBy[0]
               : [],
           beneficiary_keywords: beneficiaries,
-          q: searchQuery,
+          q: query,
         });
 
         const requestOptions = {
@@ -77,7 +77,7 @@ export default function Saved() {
     fetchState();
   }, [
     authState.token,
-    searchQuery,
+    query,
     currentPage,
     sponsoredBy,
     states,

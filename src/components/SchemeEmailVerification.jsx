@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@/Context/AuthContext";
 
-const SchemeVerifiedStatus = () => {
+const VerifiedStatus = () => {
   const { authState } = useAuth();
-
   const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {
     const checkEmailVerification = async () => {
-      if (!authState.token) {
-        console.log("No token available");
+      if (!authState.token || localStorage.getItem("emailVerifiedDismissed")) {
         return;
       }
 
@@ -27,15 +25,11 @@ const SchemeVerifiedStatus = () => {
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/user/me/`,
           requestOptions
         );
+
         const data = await response.json();
-        // console.log("API Response: ", data);
 
         if (data && !data.is_email_verified) {
-          console.log("Email not verified");
           setShowMessage(true);
-        } else {
-          console.log("Email is verified");
-          setShowMessage(false);
         }
       } catch (error) {
         console.error("Failed to check email verification", error);
@@ -47,12 +41,13 @@ const SchemeVerifiedStatus = () => {
 
   const handleClose = () => {
     setShowMessage(false);
+    localStorage.setItem("emailVerifiedDismissed", "true");
   };
 
   return (
     showMessage && (
-      <div className="relative  flex items-center justify-between p-4 bg-violet-100 text-black border border-violet-800 rounded mx-auto  ">
-        <span className="ml-4  text-sm">
+      <div className="relative w-full flex items-center justify-between p-4 bg-violet-100 text-black border border-violet-800 rounded mx-auto sm:w-full">
+        <span className="ml-4 text-sm">
           Email has been sent to your mail, please verify
         </span>
         <button
@@ -66,4 +61,4 @@ const SchemeVerifiedStatus = () => {
   );
 };
 
-export default SchemeVerifiedStatus;
+export default VerifiedStatus;
